@@ -1,6 +1,19 @@
 import sys
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+
+
+def least_squares():
+    pass
+
+
+def graph_scatterplot(title, x_label, x_axis, y_label, y_axis):
+    plt.scatter(x_axis, y_axis)
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    return plt
 
 
 def main():
@@ -42,9 +55,52 @@ def main():
     lit_amino_acid_values, lit_residuals, lit_rank, lit_s = np.linalg.lstsq(lit_aa_matrix, lit_n_values, rcond=None)
     print("Literature Amino Acid Values:", lit_amino_acid_values)
     
+    aa_df = pd.read_csv("aa_labeling_sites.tsv", sep='\t')
+    aa_nv = list(aa_df.iloc[0, :].values)
+    
+    lit_graph = graph_scatterplot("Diet A Literature N-Values", "Literature N-Values", aa_nv[2:-12],
+                                  "Calculated Literature N-Values", lit_amino_acid_values)
+    lit_graph.show()
+    
+    emp_graph = graph_scatterplot("Diet A Empirical N-Values", "Literature N-Values", aa_nv[2:-12],
+                                  "Calculated Empirical N-Values", emp_amino_acid_values)
+    emp_graph.show()
+    
     sys.exit()
 
 
 if __name__ == "__main__":
     main()
+    
+# import numpy as np
+# import pandas as pd
+# from sklearn.decomposition import PCA
+# from sklearn.preprocessing import StandardScaler
+# import matplotlib.pyplot as plt
+#
+# # Example DataFrame
+# data = pd.DataFrame({
+#     'feature1': [1, 2, 3, 4, 5],
+#     'feature2': [2, 3, 4, 5, 6],
+#     'feature3': [3, 4, 5, 6, 7]
+# })
+#
+# # Standardize the data before applying PCA
+# scaler = StandardScaler()
+# scaled_data = scaler.fit_transform(data)
+#
+# # Apply PCA
+# pca = PCA(n_components=2)
+# principal_components = pca.fit_transform(scaled_data)
+#
+# # Create a DataFrame with principal components
+# pca_df = pd.DataFrame(data=principal_components, columns=['PCA1', 'PCA2'])
+#
+# # Create the scatterplot
+# plt.scatter(pca_df['PCA1'], pca_df['PCA2'])
+# plt.title("PCA Scatterplot")
+# plt.xlabel("PCA1")
+# plt.ylabel("PCA2")
+# plt.show()
+
     
