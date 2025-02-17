@@ -2,10 +2,26 @@ import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import minimize
 
 
-def least_squares():
-    pass
+def apply_constraint(matrix, n_values, aa_n_values):
+    def objective(x, a, B):
+        return np.linalg.norm(a @ x - B)
+    
+    # Constraints function to ensure values are non-zero
+    def constraint(x):
+        return x - 1e-6  # Example constraint to ensure values are not zero
+    
+    # Define constraints dictionary
+    constraints = {'type': 'ineq', 'fun': constraint}
+    
+    # Perform optimization
+    result = minimize(objective, aa_n_values, args=(matrix, n_values), constraints=constraints)
+    
+    # Print the result
+    print("Solution:", result.x)
+    return aa_n_values
 
 
 def graph_scatterplot(title, x_label, x_axis, y_label, y_axis):
@@ -19,6 +35,8 @@ def graph_scatterplot(title, x_label, x_axis, y_label, y_axis):
 def main():
     args = sys.argv[1:]
     amino_acids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
+    # amino_acids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y',
+    #                'm', 'q', '1', '2', '3', '4', 's', 't', 'y', 'k', 'c', 'o']
     
     # read .tsv files and remove unnecessary columns
     emp_df = pd.read_csv(args[0], sep='\t', low_memory=False)
@@ -49,16 +67,19 @@ def main():
     emp_n_values = np.array(emp_df['n_value'].values, dtype=float)
     lit_n_values = np.array(lit_df['n_value'].values, dtype=float)
     
+    # https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html#numpy-linalg-lstsq
     emp_amino_acid_values, emp_residuals, emp_rank, emp_s = np.linalg.lstsq(emp_aa_matrix, emp_n_values, rcond=None)
     print("Empirical Amino Acid Values:", emp_amino_acid_values)
     
     lit_amino_acid_values, lit_residuals, lit_rank, lit_s = np.linalg.lstsq(lit_aa_matrix, lit_n_values, rcond=None)
     print("Literature Amino Acid Values:", lit_amino_acid_values)
     
+    # lit_amino_acid_values = apply_constraint(lit_aa_matrix, lit_n_values, lit_amino_acid_values)
+    
     aa_df = pd.read_csv("aa_labeling_sites.tsv", sep='\t')
     aa_nv = list(aa_df.iloc[0, :].values)
     
-    lit_graph = graph_scatterplot("Diet A Literature N-Values", "Literature N-Values", aa_nv[2:-12],
+    lit_graph = graph_scatterplot("Diet A Literature N-Values", "Literature N-Values", aa_nv[2:-12  ],
                                   "Calculated Literature N-Values", lit_amino_acid_values)
     lit_graph.show()
     
@@ -102,5 +123,29 @@ if __name__ == "__main__":
 # plt.xlabel("PCA1")
 # plt.ylabel("PCA2")
 # plt.show()
+
+# def objective(x, A, b):
+#     return np.linalg.norm(A @ x - b)
+#
+# # Constraints function to ensure values are non-zero
+# def constraint(x):
+#     return x - 1e-6  # Example constraint to ensure values are not zero
+#
+# # Example data
+# A = np.array([[1, 2], [3, 4], [5, 6]])
+# b = np.array([7, 8, 9])
+#
+# # Initial guess
+# x0 = np.ones(A.shape[1])
+#
+# # Define constraints dictionary
+# constraints = {'type': 'ineq', 'fun': constraint}
+#
+# # Perform optimization
+# result = minimize(objective, x0, args=(A, b), constraints=constraints)
+#
+# # Print the result
+# print("Solution:", result.x)
+
 
     
