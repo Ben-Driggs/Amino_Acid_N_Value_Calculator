@@ -45,6 +45,8 @@ def main():
         amino_acids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W',
                        'Y',
                        'm', 'q', '1', '2', '3', '4', 's', 't', 'y', 'k', 'c', 'o']
+        
+    mods = ['m', 'q', '1', '2', '3', '4', 's', 't', 'y', 'k', 'c', 'o']
     
     count = 1
     for d in args:
@@ -69,13 +71,25 @@ def main():
         else:
             color = "orange"
         
-        columns = ['Sequence', 'n_value']
-        emp_df = emp_df.loc[:, columns]
-        lit_df = lit_df.loc[:, columns]
+        emp_columns = ['Sequence', 'n_value', 'n_value_stddev']
+        lit_columns = ['Sequence', 'n_value']
+        emp_df = emp_df.loc[:, emp_columns]
+        lit_df = lit_df.loc[:, lit_columns]
         
         # drop any rows with string values
         emp_df = emp_df[emp_df.loc[:, 'n_value'] != "no valid time points"]
         lit_df = lit_df[lit_df.loc[:, 'n_value'] != "no valid time points"]
+        
+        # remove any rows with modified peptides
+        e_mask = emp_df['Sequence'].str.contains('|'.join(mods))
+        l_mask = lit_df['Sequence'].str.contains('|'.join(mods))
+        
+        emp_df = emp_df[~e_mask]
+        lit_df = lit_df[~l_mask]
+        
+        # filter out noise by setting a limit on n_value standard deviation
+        emp_df['n_value_stddev'] = emp_df['n_value_stddev'].astype(float)
+        emp_df = emp_df[emp_df['n_value_stddev'] <= 0.1]
         
         # create numpy arrays with sequences as rows, and amino acid counts as columns
         emp_aa_matrix = np.zeros((len(emp_df['Sequence'].values), len(amino_acids)), dtype=int)
