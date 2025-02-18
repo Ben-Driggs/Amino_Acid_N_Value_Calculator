@@ -28,6 +28,8 @@ def graph_scatterplot(title, x_label, x_axis, y_label, y_axis, color, count):
     plt.subplot(4, 2, count)
     plt.scatter(x_axis, y_axis, color=color)
     plt.title(title)
+    plt.xlim(0, 5)
+    plt.ylim(-1, 8)
     plt.xlabel(x_label, labelpad=5)
     plt.ylabel(y_label, labelpad=5)
     return plt
@@ -87,7 +89,7 @@ def main():
         
         # filter out noise by setting a limit on n_value standard deviation
         emp_df['n_value_stddev'] = emp_df['n_value_stddev'].astype(float)
-        emp_df = emp_df[emp_df['n_value_stddev'] <= 0.1]
+        emp_df = emp_df[emp_df['n_value_stddev'] <= 5]
         
         # create numpy arrays with sequences as rows, and amino acid counts as columns
         emp_aa_matrix = np.zeros((len(emp_df['Sequence'].values), len(amino_acids)), dtype=int)
