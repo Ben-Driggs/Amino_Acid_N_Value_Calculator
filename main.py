@@ -29,11 +29,11 @@ def graph_scatterplot(title, x_label, x_axis, y_label, y_axis, color, count):
     plt.scatter(x_axis, y_axis, color=color)
     plt.title(title)
     plt.xlim(0, 5)
-    plt.ylim(-1, 8)
+    plt.ylim(-1, 10)
     plt.xlabel(x_label, labelpad=5)
     plt.ylabel(y_label, labelpad=5)
     return plt
-
+    
 
 def main():
     args = sys.argv[1:]
@@ -71,8 +71,8 @@ def main():
         else:
             color = "orange"
         
-        emp_columns = ['Sequence', 'n_value', 'n_value_stddev']
-        lit_columns = ['Sequence', 'n_value']
+        emp_columns = ['Sequence', 'n_value', 'n_value_stddev', 'abundances']
+        lit_columns = ['Sequence', 'n_value', 'abundances']
         emp_df = emp_df.loc[:, emp_columns]
         lit_df = lit_df.loc[:, lit_columns]
         
@@ -87,11 +87,23 @@ def main():
         emp_df = emp_df[~e_mask]
         lit_df = lit_df[~l_mask]
         
+        # filter by abundance
+        # sum abundances and take top 50%
+        emp_df.loc[:, 'sum_abundances'] = emp_df['abundances'].apply(lambda x: sum([float(value) for value in x[1:-1].split(', ')]))
+        lit_df.loc[:, 'sum_abundances'] = lit_df['abundances'].apply(lambda x: sum([float(value) for value in x[1:-1].split(', ')]))
+        
+        emp_threshold = emp_df['sum_abundances'].quantile(0.25)
+        lit_threshold = lit_df['sum_abundances'].quantile(0.25)
+        
+        emp_df = emp_df[emp_df['sum_abundances'] >= emp_threshold]
+        lit_df = lit_df[lit_df['sum_abundances'] >= lit_threshold]
+        
         # filter out noise by setting a limit on n_value standard deviation
+        emp_df = emp_df[emp_df['n_value'] != "no valid time points"]
         emp_df['n_value_stddev'] = emp_df['n_value_stddev'].astype(float)
         emp_df['n_value'] = emp_df['n_value'].astype(float)
-        emp_df = emp_df[emp_df['n_value'] <= 100]
-        emp_df = emp_df[emp_df['n_value_stddev'] <= 5]
+        # emp_df = emp_df[emp_df['n_value'] <= 100]
+        emp_df = emp_df[emp_df['n_value_stddev'] <= 0.1]
         
         # create numpy arrays with sequences as rows, and amino acid counts as columns
         emp_aa_matrix = np.zeros((len(emp_df['Sequence'].values), len(amino_acids)), dtype=int)
