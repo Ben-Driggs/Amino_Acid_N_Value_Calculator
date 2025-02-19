@@ -38,7 +38,7 @@ def graph_scatterplot(title, x_label, x_axis, y_label, y_axis, color, count):
 def main():
     args = sys.argv[1:]
     no_mods = True
-    fig = plt.figure(figsize=(10, 10))
+    fig = plt.figure(figsize=(10, 20))
     
     if no_mods:
         amino_acids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
@@ -89,6 +89,8 @@ def main():
         
         # filter out noise by setting a limit on n_value standard deviation
         emp_df['n_value_stddev'] = emp_df['n_value_stddev'].astype(float)
+        emp_df['n_value'] = emp_df['n_value'].astype(float)
+        emp_df = emp_df[emp_df['n_value'] <= 100]
         emp_df = emp_df[emp_df['n_value_stddev'] <= 5]
         
         # create numpy arrays with sequences as rows, and amino acid counts as columns
@@ -136,8 +138,9 @@ def main():
                                           "Empirical N-Values", emp_amino_acid_values, color, count)
         count += 1
         
+    # plt.gca().set_aspect('equal', adjustable='box')
     plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
-    plt.tight_layout()
+    plt.tight_layout(h_pad=12, w_pad=6)
     plt.show()
     
     sys.exit()

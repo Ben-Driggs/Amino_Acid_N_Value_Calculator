@@ -62,7 +62,7 @@ def main():
         emp_df['n_value_stddev'] = emp_df['n_value_stddev'].astype(float)
         emp_df['n_value'] = emp_df['n_value'].astype(float)
         emp_df = emp_df[emp_df['n_value'] <= 100]
-        filtered_emp_df = emp_df[emp_df.loc[:, 'n_value_stddev'] <= 10]
+        filtered_emp_df = emp_df[emp_df.loc[:, 'n_value_stddev'] <= 0.01]
         
         emp_df['identifier'] = emp_df['Protein ID'] + '_' + emp_df['Sequence'] + '_' + emp_df['cf']
         filtered_emp_df.loc[:, 'identifier'] = filtered_emp_df.loc[:, 'Protein ID'] + '_' + filtered_emp_df.loc[:, 'Sequence'] + '_' + filtered_emp_df.loc[:, 'cf']
@@ -109,3 +109,4 @@ if __name__ == "__main__":
 # filter out high standard deviations
 # make tablular form of the AA n-values
 # recalculate peptide n-values from empirical AA n-values
+# filter top 50% abundant peptides
