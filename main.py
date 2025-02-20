@@ -35,7 +35,7 @@ def graph_scatterplot(title, x_label, x_axis, y_label, y_axis, color, count):
     return plt
     
 
-def main():
+def calc_aa_nvalues():
     args = sys.argv[1:]
     no_mods = True
     fig = plt.figure(figsize=(10, 20))
@@ -95,15 +95,15 @@ def main():
         emp_threshold = emp_df['sum_abundances'].quantile(0.25)
         lit_threshold = lit_df['sum_abundances'].quantile(0.25)
         
-        emp_df = emp_df[emp_df['sum_abundances'] >= emp_threshold]
-        lit_df = lit_df[lit_df['sum_abundances'] >= lit_threshold]
+        # emp_df = emp_df[emp_df['sum_abundances'] >= emp_threshold]
+        # lit_df = lit_df[lit_df['sum_abundances'] >= lit_threshold]
         
         # filter out noise by setting a limit on n_value standard deviation
         emp_df = emp_df[emp_df['n_value'] != "no valid time points"]
         emp_df['n_value_stddev'] = emp_df['n_value_stddev'].astype(float)
         emp_df['n_value'] = emp_df['n_value'].astype(float)
-        # emp_df = emp_df[emp_df['n_value'] <= 100]
-        emp_df = emp_df[emp_df['n_value_stddev'] <= 0.1]
+        emp_df = emp_df[emp_df['n_value'] <= 100]
+        emp_df = emp_df[emp_df['n_value_stddev'] <= 0.05]
         
         # create numpy arrays with sequences as rows, and amino acid counts as columns
         emp_aa_matrix = np.zeros((len(emp_df['Sequence'].values), len(amino_acids)), dtype=int)
@@ -159,7 +159,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    calc_aa_nvalues()
     
 # import numpy as np
 # import pandas as pd
@@ -235,7 +235,4 @@ if __name__ == "__main__":
 #
 # # Display the plot
 # plt.show()
-
-
-
     
