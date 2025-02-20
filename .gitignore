@@ -14,4 +14,6 @@ Diet_F_Empirical_delta_by_enrichment.tsv
 Diet_F_Literature_delta_by_enrichment.tsv
 Diet_G_Empirical_delta_by_enrichment.tsv
 Diet_G_Literature_delta_by_enrichment.tsv
+prev_results.csv
+__pycache__/
 .idea
