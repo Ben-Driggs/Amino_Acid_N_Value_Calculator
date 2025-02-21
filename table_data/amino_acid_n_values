@@ -1,21 +1,21 @@
-	Diet_A_empirical_n_value	Diet_A_literature_n_value	Diet_C_empirical_n_value	Diet_C_literature_n_value	Diet_F_empirical_n_value	Diet_F_literature_n_value	Diet_G_empirical_n_value	Diet_G_literature_n_value
-Alanine	2.89	3.95	3.53	3.95	-0.04	3.95	5.03	3.95
-Cysteine	5.02	1.67	11.09	1.67	11.75	1.67	-2.43	1.67
-Aspartic Acid	4.49	2.5	-1.04	2.5	3.79	2.5	-1.07	2.5
-Glutamic Acid	5.33	4.18	3.31	4.18	5.01	4.18	0.98	4.18
-Phenylalanine	-0.15	0.47	0.39	0.47	1.95	0.47	0.49	0.47
-Glycine	1.21	1.84	1.95	1.84	2.62	1.84	0.62	1.84
-Histidine	2.12	2.15	3.38	2.15	6.3	2.15	0.43	2.15
-Isoleucine	2.08	0.8	2.95	0.8	3.03	0.8	0.89	0.8
-Lysine	0.12	0.3	2.19	0.3	-7.38	0.3	12.77	0.3
-Leucine	3.01	0.7	3.91	0.7	2.38	0.7	4.38	0.7
-Methionine	6.36	1.02	0.94	1.02	-7.62	1.02	9.75	1.02
-Asparagine	-0.63	1.15	2.39	1.15	3.06	1.15	3.59	1.15
-Proline	-0.36	1.57	0.72	1.57	1.05	1.57	0.73	1.57
-Glutamine	3.21	3.62	2.34	3.62	3.1	3.62	4.68	3.62
-Arginine	-4.47	3.4	0.6	3.4	-3.56	3.4	13.32	3.4
-Serine	3.23	1.96	-0.21	1.96	1.27	1.96	0.08	1.96
-Threonine	-0.27	0.21	2.75	0.21	3.24	0.21	4.88	0.21
-Valine	4.88	0.79	-0.62	0.79	-0.65	0.79	2.4	0.79
-Tryptophan	1.69	0.06	-4.2	0.06	2.39	0.06	3.64	0.06
-Tyrosine	1.0	0.5	-1.96	0.5	2.03	0.5	0.06	0.5
+	Diet_A_empirical_n_value	Diet_C_empirical_n_value	Diet_F_empirical_n_value	Diet_G_empirical_n_value	literature_n_value
+Alanine	3.2	0.0	0.9	4.0	3.95
+Cysteine	0.0	3.0	3.0	0.0	1.67
+Aspartic Acid	3.0	3.0	3.0	0.0	2.5
+Glutamic Acid	2.62	0.48	5.0	3.8	4.18
+Phenylalanine	4.67	8.0	8.0	7.91	0.47
+Glycine	2.0	2.0	1.74	0.0	1.84
+Histidine	1.59	5.0	3.2	0.0	2.15
+Isoleucine	6.0	2.11	3.66	2.25	0.8
+Lysine	2.04	5.7	0.0	4.43	0.3
+Leucine	4.83	10.0	3.48	7.08	0.7
+Methionine	2.83	0.0	0.0	0.0	1.02
+Asparagine	0.07	0.0	1.61	3.0	1.15
+Proline	4.33	3.95	3.14	4.75	1.57
+Glutamine	5.0	3.03	5.0	4.85	3.62
+Arginine	3.67	0.0	3.2	7.0	3.4
+Serine	0.56	2.06	2.57	0.0	1.96
+Threonine	0.0	5.0	4.36	5.0	0.21
+Valine	6.76	4.69	0.67	2.91	0.79
+Tryptophan	0.0	8.0	0.0	1.89	0.06
+Tyrosine	7.0	0.0	0.0	0.39	0.5
