@@ -25,20 +25,20 @@ def apply_constraint(matrix, n_values, aa_n_values):
 
 
 def graph_scatterplot(title, x_label, x_axis, y_label, y_axis, color, count):
-    plt.subplot(4, 2, count)
+    plt.subplot(2, 2, count)
     plt.scatter(x_axis, y_axis, color=color)
     plt.title(title)
-    plt.xlim(0, 5)
-    plt.ylim(-1, 10)
-    plt.xlabel(x_label, labelpad=5)
-    plt.ylabel(y_label, labelpad=5)
+    # plt.xlim(0, 5)
+    # plt.ylim(0, 5)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
     return plt
     
 
 def calc_aa_nvalues():
     args = sys.argv[1:]
     no_mods = True
-    fig = plt.figure(figsize=(10, 20))
+    fig = plt.figure(figsize=(10, 10))
     
     if no_mods:
         amino_acids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
@@ -63,12 +63,16 @@ def calc_aa_nvalues():
         
         # set plot colors
         if group == "Diet_A":
+            title = "LP AL"
             color = "blue"
         elif group == "Diet_C":
+            title = "LP CR"
             color = "red"
         elif group == "Diet_F":
+            title = "HP AL"
             color = "green"
         else:
+            title = "HP CR"
             color = "orange"
         
         emp_columns = ['Sequence', 'n_value', 'n_value_stddev', 'abundances']
@@ -137,22 +141,23 @@ def calc_aa_nvalues():
         aa_nv = list(aa_df.iloc[0, :].values)
         
         if no_mods:
-            lit_graph = graph_scatterplot(f"{group} Literature N-Values", "Literature N-Values", aa_nv[2:-12],
-                                          "Estimated N-Values", lit_amino_acid_values, color, count)
-            count += 1
-            emp_graph = graph_scatterplot(f"{group} Empirical N-Values", "Literature N-Values", aa_nv[2:-12],
-                                          "Empirical N-Values", emp_amino_acid_values, color, count)
+            lit_graph = graph_scatterplot(f"{title}", "", aa_nv[2:-12],
+                                          "", lit_amino_acid_values, color, count)
+            # count += 1
+            # emp_graph = graph_scatterplot(f"{group} Empirical N-Values", "Literature N-Values", aa_nv[2:-12],
+            #                               "Empirical N-Values", emp_amino_acid_values, color, count)
         else:
-            lit_graph = graph_scatterplot(f"{group} Literature N-Values", "Literature N-Values", aa_nv[2:],
+            lit_graph = graph_scatterplot(f"{title}", "Literature N-Values", aa_nv[2:],
                                           "Estimated N-Values", lit_amino_acid_values, color, count)
-            count += 1
-            emp_graph = graph_scatterplot(f"{group} Empirical N-Values", "Literature N-Values", aa_nv[2:],
-                                          "Empirical N-Values", emp_amino_acid_values, color, count)
+            # count += 1
+            # emp_graph = graph_scatterplot(f"{group} Empirical N-Values", "Literature N-Values", aa_nv[2:],
+            #                               "Empirical N-Values", emp_amino_acid_values, color, count)
         count += 1
         
     # plt.gca().set_aspect('equal', adjustable='box')
-    plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
-    plt.tight_layout(h_pad=12, w_pad=6)
+    # plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
+    plt.tight_layout(h_pad=6, w_pad=6)
+    # plt.tight_layout()
     plt.show()
     
     sys.exit()

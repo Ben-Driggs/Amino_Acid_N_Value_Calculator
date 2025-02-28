@@ -20,12 +20,14 @@ def main():
     mods = ['m', 'q', '1', '2', '3', '4', 's', 't', 'y', 'k', 'c', 'o']
     args = sys.argv[1:]
     results = {}
+    num_filtered = {}
+    conditions = {}
     
     fig = plt.figure(figsize=(10, 10))
     std_distances = {}
     
-    # mode = "compare"
-    mode = "calc"
+    mode = "compare"
+    # mode = "calc"
     
     count = 1
     for d in args:
@@ -91,12 +93,12 @@ def main():
         merged_df.loc[:, 'sum_abundances'] = merged_df['abundances'].apply(
             lambda v: sum([float(value) for value in v[1:-1].split(', ')]))
 
-        emp_threshold = merged_df['sum_abundances'].quantile(0.10)
+        emp_threshold = merged_df['sum_abundances'].quantile(0.25)
 
         merged_df = merged_df[merged_df['sum_abundances'] >= emp_threshold]
         
-        emp_threshold = merged_df['sum_abundances'].quantile(0.75)
-        merged_df = merged_df[merged_df['sum_abundances'] <= emp_threshold]
+        # emp_threshold = merged_df['sum_abundances'].quantile(0.75)
+        # merged_df = merged_df[merged_df['sum_abundances'] <= emp_threshold]
         
         # filter out noise by setting a limit on n_value standard deviation
         merged_df = merged_df[merged_df['n_value_lit'] != "no valid time points"]
@@ -150,10 +152,10 @@ def main():
     
             # plt.xlim(0, 100)
             # plt.ylim(0, 100)
-            # plt.title(f"{group} - Literature vs Empirical Peptide N-Values")
-            plt.xlabel(f"{title} Peptide Literature N-Values")
-            plt.ylabel(f"{title} Peptide Empirical N-Values")
-            plt.legend()
+            # plt.title(f"{group}")
+            # plt.xlabel(f"{title} Peptide Literature N-Values")
+            # plt.ylabel(f"{title} Peptide Empirical N-Values")
+            plt.legend(title=group)
             count += 1
             
         else:
@@ -219,6 +221,8 @@ def main():
             result = lsq_linear(emp_aa_matrix, emp_n_values, bounds=bounds)
             emp_amino_acid_values = result.x
             print('Empirical Amino Acid Values:', emp_amino_acid_values)
+            num_filtered[group] = len(emp_n_values)
+            conditions[group] = round(np.linalg.cond(emp_aa_matrix), 2)
             
             if no_mods:
                 lit_graph = graph_scatterplot(f"{group} Literature N-Values", "Literature N-Values", aa_nv[2:-12],
@@ -271,6 +275,8 @@ def main():
         df = pd.DataFrame(data=results, index=amino_acid_names)
         df.to_csv(path_or_buf="table_data/amino_acid_n_values", sep='\t')
     
+    print("Total:", num_filtered)
+    print("Conditions:", conditions)
     sys.exit()
 
 
