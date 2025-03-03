@@ -84,6 +84,25 @@ def main():
         
         merged_df = merged_df.drop_duplicates()
         
+        merged_df = merged_df[merged_df['n_value_emp'] != "no valid time points"]
+        
+        # remove any peptides where the n-value is larger than the number of possible labeled sites
+        aa_df = pd.read_csv("aa_labeling_sites.tsv", sep='\t')
+        max_sites_dict = aa_df.iloc[2, 1:].to_dict()
+        
+        def sum_labeling_sites(seq):
+            return sum(max_sites_dict.get(a, 0) for a in seq)
+        
+        merged_df['max_label_sites'] = merged_df['Sequence'].apply(sum_labeling_sites)
+        
+        merged_df['n_value_stddev'] = merged_df['n_value_stddev'].astype(float)
+        merged_df['n_value_emp'] = merged_df['n_value_emp'].astype(float)
+        merged_df['max_label_sites'] = merged_df['max_label_sites'].astype(float)
+        merged_df = merged_df[merged_df['n_value_emp'] <= merged_df['max_label_sites']]
+        
+        # remove standard deviations of zero?
+        # merged_df = merged_df[merged_df['n_value_emp'] < (0.9 * merged_df['max_label_sites'])]
+        
         # remove any rows with modified peptides
         e_mask = merged_df['Sequence'].str.contains('|'.join(mods))
         merged_df = merged_df[~e_mask]
@@ -103,8 +122,6 @@ def main():
         # filter out noise by setting a limit on n_value standard deviation
         merged_df = merged_df[merged_df['n_value_lit'] != "no valid time points"]
         merged_df = merged_df[merged_df['n_value_emp'] != "no valid time points"]
-        merged_df['n_value_stddev'] = merged_df['n_value_stddev'].astype(float)
-        merged_df['n_value_emp'] = merged_df['n_value_emp'].astype(float)
         filtered_df = merged_df[merged_df.loc[:, 'n_value_stddev'] <= 0.05]
         # filtered_df = merged_df.copy()
         
@@ -202,7 +219,6 @@ def main():
             lit_amino_acid_values, lit_residuals, lit_rank, lit_s = np.linalg.lstsq(lit_aa_matrix, lit_n_values, rcond=None)
             print("Literature Amino Acid Values:", lit_amino_acid_values)
             
-            aa_df = pd.read_csv("aa_labeling_sites.tsv", sep='\t')
             aa_nv = list(aa_df.iloc[0, :].values)
             
             x0 = np.array(aa_nv[2:-12])
