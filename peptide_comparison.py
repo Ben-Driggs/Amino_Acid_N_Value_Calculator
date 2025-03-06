@@ -89,10 +89,10 @@ def main():
         # remove any peptides where the n-value is larger than the number of possible labeled sites
         aa_df = pd.read_csv("aa_labeling_sites.tsv", sep='\t')
         max_sites_dict = aa_df.iloc[2, 1:].to_dict()
-        
+
         def sum_labeling_sites(seq):
             return sum(max_sites_dict.get(a, 0) for a in seq)
-        
+
         merged_df['max_label_sites'] = merged_df['Sequence'].apply(sum_labeling_sites)
         
         merged_df['n_value_stddev'] = merged_df['n_value_stddev'].astype(float)
@@ -172,8 +172,11 @@ def main():
             # plt.title(f"{group}")
             # plt.xlabel(f"{title} Peptide Literature N-Values")
             # plt.ylabel(f"{title} Peptide Empirical N-Values")
-            plt.legend(title=group)
+            plt.legend(title=title)
+            plt.xlim(0, 100)
+            plt.ylim(0, 250)
             count += 1
+            print(len(f_x))
             
         else:
             no_mods = True
