@@ -26,8 +26,8 @@ def main():
     fig = plt.figure(figsize=(10, 10))
     std_distances = {}
     
-    mode = "compare"
-    # mode = "calc"
+    # mode = "compare"
+    mode = "calc"
     
     count = 1
     for d in args:
@@ -218,8 +218,10 @@ def main():
             # https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html#numpy-linalg-lstsq
             # emp_amino_acid_values, emp_residuals, emp_rank, emp_s = np.linalg.lstsq(emp_aa_matrix, emp_n_values, rcond=None)
             # print("Empirical Amino Acid Values:", emp_amino_acid_values)
-    
-            lit_amino_acid_values, lit_residuals, lit_rank, lit_s = np.linalg.lstsq(lit_aa_matrix, lit_n_values, rcond=None)
+            
+            result1 = lsq_linear(lit_aa_matrix, lit_n_values)
+            lit_amino_acid_values = result1.x
+            # lit_amino_acid_values, lit_residuals, lit_rank, lit_s = np.linalg.lstsq(lit_aa_matrix, lit_n_values, rcond=None)
             print("Literature Amino Acid Values:", lit_amino_acid_values)
             
             aa_nv = list(aa_df.iloc[0, :].values)
@@ -238,8 +240,27 @@ def main():
             
             # result = least_squares(residuals, x0, args=(emp_aa_matrix, emp_n_values))
             result = lsq_linear(emp_aa_matrix, emp_n_values, bounds=bounds)
+            
+            # run monte carlo simulation to try and improve results
+            num_samples = 1000
+            solutions = []
+            for _ in range(num_samples):
+                b_sample = emp_n_values + np.random.uniform(-1, 1, size=emp_n_values.shape)
+                solution = lsq_linear(emp_aa_matrix, b_sample, bounds=bounds)
+                solutions.append(solution.x)
+                
+            solutions = np.array(solutions)
+            
+            # calculate mean and standard deviation
+            mc_amino_acid_values = np.mean(solutions, axis=0)
+            mc_stddev = np.std(solutions, axis=0)
+            mc_stddev = [round(x, 2) for x in mc_stddev]
+            
+            print("Monte Carlo means:", mc_amino_acid_values)
+            print("Monte Carlo std devs:", mc_stddev)
+
             emp_amino_acid_values = result.x
-            print('Empirical Amino Acid Values:', emp_amino_acid_values)
+            # print('Empirical Amino Acid Values:', emp_amino_acid_values)
             num_filtered[group] = len(emp_n_values)
             conditions[group] = round(np.linalg.cond(emp_aa_matrix), 2)
             
@@ -249,14 +270,22 @@ def main():
                 count += 1
                 emp_graph = graph_scatterplot(f"{group} Empirical N-Values", "Literature N-Values", aa_nv[2:-12],
                                               "Empirical N-Values", emp_amino_acid_values, color, count)
+                monte_carlo_graph = graph_scatterplot(f"{group} Monte Carlo N-Values",
+                                                      "Literature N-Values", aa_nv[2:-12], "Monte Carlo N-Values",
+                                                      mc_amino_acid_values, color, count)
             else:
                 lit_graph = graph_scatterplot(f"{group} Literature N-Values", "Literature N-Values", aa_nv[2:],
                                               "Estimated N-Values", lit_amino_acid_values, color, count)
                 count += 1
                 emp_graph = graph_scatterplot(f"{group} Empirical N-Values", "Literature N-Values", aa_nv[2:],
                                               "Empirical N-Values", emp_amino_acid_values, color, count)
+                monte_carlo_graph = graph_scatterplot(f"{group} Monte Carlo N-Values, std={mc_stddev}",
+                                                      "Literature N-Values", aa_nv[2:-12], "Monte Carlo N-Values",
+                                                      mc_amino_acid_values, color, count)
             count += 1
             results[f"{group}_empirical_n_value"] = [round(v, 2) for v in emp_amino_acid_values]
+            results[f"{group}_mc_n_values"] = [round(v, 2) for v in mc_amino_acid_values]
+            results[f"{group}_mc_stddevs"] = mc_stddev
             if group == "Diet_G":
                 results["literature_n_value"] = [round(v, 2) for v in lit_amino_acid_values]
         
@@ -302,6 +331,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+# TODO: could we implement residuals for amino acids that we don't expect to change much?
 # filter out high standard deviations
 # make tablular form of the AA n-values
 # recalculate peptide n-values from empirical AA n-values
