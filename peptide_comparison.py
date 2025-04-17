@@ -245,7 +245,7 @@ def main():
             num_samples = 1000
             solutions = []
             for _ in range(num_samples):
-                b_sample = emp_n_values + np.random.uniform(-1, 1, size=emp_n_values.shape)
+                b_sample = emp_n_values + np.random.uniform(-0.25, 0.25, size=emp_n_values.shape)
                 solution = lsq_linear(emp_aa_matrix, b_sample, bounds=bounds)
                 solutions.append(solution.x)
                 
@@ -332,6 +332,7 @@ if __name__ == "__main__":
     main()
 
 # TODO: could we implement residuals for amino acids that we don't expect to change much?
+# TODO: what is the range of noise we should use for Monte Carlo?
 # filter out high standard deviations
 # make tablular form of the AA n-values
 # recalculate peptide n-values from empirical AA n-values
